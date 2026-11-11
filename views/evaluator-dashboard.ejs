@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-blue-900">Evaluator Review Dashboard</h1>
+            <p class="text-sm text-gray-600 mt-1">Review and manage department submissions securely.</p>
+        </div>
+        <a href="/ideas/feed" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 text-sm">
+            ← Back to Feed
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 bg-blue-50 border-b font-semibold text-blue-900">Department Submissions Review</div>
+        
+        <% if (submissions.length === 0) { %>
+            <p class="text-gray-500 text-center py-8">No submissions found for your department.</p>
+        <% } else { %>
+            <div class="divide-y divide-gray-200">
+                <% submissions.forEach(sub => { %>
+                    <div class="p-6 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full">ID: #<%= sub.id %></span>
+                                <h3 class="text-xl font-bold text-gray-900 mt-1"><%= sub.title %></h3>
+                                <p class="text-xs text-gray-500 mt-1">Submitted by <strong><%= sub.author_name %></strong> on <%= new Date(sub.created_at).toLocaleString() %></p>
+                            </div>
+                            <span class="px-3 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-800"><%= sub.status %></span>
+                        </div>
+
+                        <p class="text-sm text-gray-700 bg-gray-50 p-4 rounded-md border"><%= sub.description %></p>
+
+                        <div class="flex justify-between items-center pt-2">
+                            <a href="/uploads/<%= sub.file_path %>" target="_blank" class="text-blue-600 hover:underline text-sm font-semibold flex items-center space-x-1">
+                                <span>📎 View Supporting File / Download</span>
+                            </a>
+
+                            <form action="/evaluator/update-status/<%= sub.id %>" method="POST" class="flex items-center space-x-2">
+                                <select name="status" class="text-sm border rounded px-2 py-1 bg-white">
+                                    <option value="Submitted" <%= sub.status === 'Submitted' ? 'selected' : '' %>>Submitted</option>
+                                    <option value="Under Review" <%= sub.status === 'Under Review' ? 'selected' : '' %>>Under Review</option>
+                                    <option value="Approved" <%= sub.status === 'Approved' ? 'selected' : '' %>>Approved</option>
+                                    <option value="Rejected" <%= sub.status === 'Rejected' ? 'selected' : '' %>>Rejected</option>
+                                </select>
+                                <button type="submit" class="bg-blue-900 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-blue-800 transition">
+                                    Update Status
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

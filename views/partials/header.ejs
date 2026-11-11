@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethiopian Airlines Innovation Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col justify-between">
+    <nav class="bg-blue-900 text-white shadow-md relative z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Brand Logo -->
+                <a href="/" class="text-lg md:text-xl font-bold tracking-wide flex items-center space-x-1">
+                    <span>✈️ Ethiopian Airlines Innovation</span>
+                </a>
+
+                <!-- Mobile Hamburger Toggle (<details> tag for no JS needed) -->
+                <details class="md:hidden group">
+                    <summary class="list-none cursor-pointer p-1 text-white hover:text-yellow-300 focus:outline-none">
+                        <svg class="w-6 h-6 block group-open:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg class="w-6 h-6 hidden group-open:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </summary>
+
+                    <!-- Mobile Dropdown Menu -->
+                    <div class="absolute top-full left-0 right-0 bg-blue-900 border-t border-blue-800 shadow-2xl p-4 flex flex-col space-y-3 font-medium text-sm">
+                        <a href="/" class="hover:text-yellow-300 transition py-1">Home</a>
+                        <a href="/ideas/feed" class="hover:text-yellow-300 transition py-1">Marketplace</a>
+                        <a href="/quests" class="font-semibold text-yellow-300 hover:underline py-1">🎯 Quests</a>
+
+                        <% if (typeof user !== 'undefined' && user) { %>
+                            <a href="/messages" class="hover:text-yellow-300 transition py-1 flex items-center justify-between">
+                                <span>💬 Messages</span>
+                                <% if (typeof unreadMessagesCount !== 'undefined' && unreadMessagesCount > 0) { %>
+                                    <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><%= unreadMessagesCount %></span>
+                                <% } %>
+                            </a>
+
+                            <details class="group/notif">
+                                <summary class="list-none cursor-pointer hover:text-yellow-300 py-1 flex items-center justify-between">
+                                    <span>🔔 Notifications</span>
+                                    <% if (typeof notifications !== 'undefined' && notifications && notifications.length > 0) { %>
+                                        <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><%= notifications.length %></span>
+                                    <% } %>
+                                </summary>
+                                <div class="mt-2 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                                    <div class="p-2.5 bg-blue-950 text-white text-xs font-bold flex justify-between items-center">
+                                        <span>Recent Alerts</span>
+                                        <% if (typeof notifications !== 'undefined' && notifications && notifications.length > 0) { %>
+                                            <a href="/notifications/read" class="text-[10px] text-yellow-300 hover:underline">Mark all read</a>
+                                        <% } %>
+                                    </div>
+                                    <div class="max-h-48 overflow-y-auto divide-y divide-gray-100 text-xs">
+                                        <% if (typeof notifications === 'undefined' || !notifications || notifications.length === 0) { %>
+                                            <p class="text-xs text-gray-500 text-center py-4">No unread notifications.</p>
+                                        <% } else { %>
+                                            <% notifications.forEach(n => { %>
+                                                <div class="p-2.5 hover:bg-gray-50">
+                                                    <p class="font-medium"><%= n.message %></p>
+                                                    <span class="text-[10px] text-gray-400 mt-0.5 block"><%= new Date(n.created_at).toLocaleTimeString() %></span>
+                                                </div>
+                                            <% }) %>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <a href="/ideas/submit" class="hover:text-yellow-300 transition py-1">Submit Idea</a>
+
+                            <% if (user.role === 'Evaluator' || user.role === 'Admin') { %>
+                                <a href="/evaluator/dashboard" class="hover:text-yellow-300 transition py-1">Evaluator Dashboard</a>
+                            <% } %>
+
+                            <% if (user.role === 'Admin') { %>
+                                <a href="/admin/audit-logs" class="bg-blue-800 hover:bg-blue-700 px-3 py-1.5 rounded text-xs font-semibold inline-block w-fit">Admin Audit</a>
+                            <% } %>
+
+                            <div class="pt-2 border-t border-blue-800 flex justify-between items-center">
+                                <a href="/auth/profile" class="bg-blue-800 px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 transition">
+                                    👤 <%= user.fullName %>
+                                </a>
+                                <a href="/auth/logout" class="bg-red-600 px-3 py-1.5 rounded hover:bg-red-700 text-xs font-semibold">Logout</a>
+                            </div>
+                        <% } else { %>
+                            <div class="pt-2 border-t border-blue-800 flex items-center space-x-3">
+                                <a href="/auth/login" class="hover:underline text-sm">Login</a>
+                                <a href="/auth/register" class="bg-blue-600 px-3 py-1.5 rounded hover:bg-blue-500 text-sm font-semibold">Register</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </details>
+
+                <!-- Desktop Navigation Links (Hidden on small screens) -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/" class="hover:underline text-sm">Home</a>
+                    <a href="/ideas/feed" class="hover:underline text-sm">Marketplace</a>
+                    <a href="/quests" class="hover:underline text-sm font-semibold text-yellow-300">🎯 Quests</a>
+
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <a href="/messages" class="hover:underline text-sm font-semibold flex items-center space-x-1">
+                            <span>💬 Messages</span>
+                            <% if (typeof unreadMessagesCount !== 'undefined' && unreadMessagesCount > 0) { %>
+                                <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unreadMessagesCount %></span>
+                            <% } %>
+                        </a>
+
+                        <!-- Notification Bell Dropdown -->
+                        <details class="relative">
+                            <summary class="list-none cursor-pointer relative text-white hover:text-yellow-300 focus:outline-none text-sm font-semibold flex items-center space-x-1 py-1">
+                                <span>🔔 Notifications</span>
+                                <% if (typeof notifications !== 'undefined' && notifications && notifications.length > 0) { %>
+                                    <span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= notifications.length %></span>
+                                <% } %>
+                            </summary>
+                            <div class="absolute right-0 mt-2 w-80 bg-white text-gray-900 rounded-lg shadow-xl border border-gray-200 z-50">
+                                <div class="p-3 bg-blue-900 text-white text-xs font-bold rounded-t-lg flex justify-between items-center">
+                                    <span>Recent Alerts</span>
+                                    <% if (typeof notifications !== 'undefined' && notifications && notifications.length > 0) { %>
+                                        <a href="/notifications/read" class="text-[10px] text-yellow-300 hover:underline">Mark all read</a>
+                                    <% } %>
+                                </div>
+                                <div class="max-h-64 overflow-y-auto divide-y divide-gray-100">
+                                    <% if (typeof notifications === 'undefined' || !notifications || notifications.length === 0) { %>
+                                        <p class="text-xs text-gray-500 text-center py-6">No unread notifications.</p>
+                                    <% } else { %>
+                                        <% notifications.forEach(n => { %>
+                                            <div class="p-3 text-xs text-gray-700 hover:bg-gray-50">
+                                                <p class="font-medium"><%= n.message %></p>
+                                                <span class="text-[10px] text-gray-400 mt-1 block"><%= new Date(n.created_at).toLocaleTimeString() %></span>
+                                            </div>
+                                        <% }) %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </details>
+
+                        <a href="/ideas/submit" class="hover:underline text-sm">Submit Idea</a>
+
+                        <% if (user.role === 'Evaluator' || user.role === 'Admin') { %>
+                            <a href="/evaluator/dashboard" class="hover:underline text-sm">Evaluator Dashboard</a>
+                        <% } %>
+
+                        <% if (user.role === 'Admin') { %>
+                            <a href="/admin/audit-logs" class="bg-blue-800 hover:bg-blue-700 px-3 py-1 rounded text-sm font-semibold">Admin Audit</a>
+                        <% } %>
+
+                        <a href="/auth/profile" class="bg-blue-800/80 px-3 py-1 rounded text-sm font-medium hover:bg-blue-700 transition" title="Edit Profile">
+                            <%= user.fullName %>
+                        </a>
+                        <a href="/auth/logout" class="bg-red-600 px-3 py-1 rounded hover:bg-red-700 text-sm">Logout</a>
+                    <% } else { %>
+                        <a href="/auth/login" class="hover:underline text-sm">Login</a>
+                        <a href="/auth/register" class="bg-blue-600 px-3 py-1 rounded hover:bg-blue-500 text-sm">Register</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full">

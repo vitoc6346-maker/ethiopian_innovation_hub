@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <h1 class="text-3xl font-extrabold text-blue-900">💬 Direct Messages Inbox</h1>
+
+    <div class="grid md:grid-cols-3 gap-6">
+        <!-- Conversations List -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3 md:col-span-1">
+            <h3 class="font-bold text-sm text-gray-700 border-b pb-2">Recent Conversations</h3>
+            <div class="space-y-1">
+                <% if (conversations.length === 0) { %>
+                    <p class="text-xs text-gray-500 py-4">No active conversations yet.</p>
+                <% } else { %>
+                    <% conversations.forEach(conv => { %>
+                        <a href="/messages/chat/<%= conv.partner_id %>" class="block p-3 rounded-lg hover:bg-blue-50 transition border border-transparent hover:border-blue-200">
+                            <p class="font-semibold text-sm text-blue-900"><%= conv.partner_name %></p>
+                            <p class="text-[11px] text-gray-500"><%= conv.partner_email %></p>
+                        </a>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Start New Chat / Directory -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4 md:col-span-2">
+            <h3 class="font-bold text-base text-blue-900">Start a New Conversation</h3>
+            <p class="text-xs text-gray-600">Select an employee below to start messaging directly:</p>
+            <div class="grid gap-2 max-h-96 overflow-y-auto">
+                <% users.forEach(u => { %>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition">
+                        <div>
+                            <p class="font-bold text-sm text-gray-900"><%= u.full_name %></p>
+                            <p class="text-xs text-gray-500"><%= u.email %> • <span class="text-blue-600"><%= u.role %></span></p>
+                        </div>
+                        <a href="/messages/chat/<%= u.id %>" class="bg-blue-900 text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-blue-800 transition">
+                            Chat ➔
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

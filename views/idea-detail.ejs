@@ -1,0 +1,74 @@
+<%- include('partials/header') %>
+
+<div class="space-y-6 max-w-3xl mx-auto">
+    <div class="flex justify-between items-center">
+        <a href="/ideas/feed" class="text-sm font-semibold text-blue-600 hover:underline">← Back to Marketplace</a>
+        <span class="px-3 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-800"><%= submission.status %></span>
+    </div>
+
+    <!-- Main Idea Card -->
+    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 space-y-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full"><%= submission.department_name %></span>
+                <h1 class="text-2xl font-extrabold text-blue-900 mt-2"><%= submission.title %></h1>
+                <p class="text-xs text-gray-500 mt-1">Submitted by <strong><%= submission.author_name %></strong> on <%= new Date(submission.created_at).toLocaleString() %></p>
+            </div>
+        </div>
+
+        <p class="text-sm text-gray-700 bg-gray-50 p-4 rounded-md border"><%= submission.description %></p>
+
+        <% if (submission.projected_savings_usd > 0) { %>
+            <div class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded border border-emerald-200 inline-block">
+                📈 Projected Annual Savings: $<%= Number(submission.projected_savings_usd).toLocaleString() %> USD (<%= submission.impact_category %>)
+            </div>
+        <% } %>
+
+        <div class="flex justify-between items-center pt-4 border-t">
+            <a href="/uploads/<%= submission.file_path %>" target="_blank" class="text-blue-600 hover:underline text-sm font-semibold flex items-center space-x-1">
+                <span>📎 View Supporting File / Download</span>
+            </a>
+            <% if (user) { %>
+                <form action="/ideas/vote/<%= submission.id %>" method="POST">
+                    <button type="submit" class="bg-blue-900 text-white px-4 py-1.5 rounded text-sm font-semibold hover:bg-blue-800 transition">
+                        👍 Endorse Innovation
+                    </button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Discussion Chat Section -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+        <h3 class="text-lg font-bold text-blue-900">💬 Team Discussion & Feedback Chat</h3>
+
+        <div class="space-y-4 divide-y">
+            <% if (comments.length === 0) { %>
+                <p class="text-gray-500 text-sm py-4">No comments yet. Start the discussion below!</p>
+            <% } else { %>
+                <% comments.forEach(comment => { %>
+                    <div class="pt-4 first:pt-0 space-y-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-gray-900"><%= comment.commenter_name %> <span class="text-blue-600 font-normal">(<%= comment.commenter_role %>)</span></span>
+                            <span class="text-gray-400"><%= new Date(comment.created_at).toLocaleString() %></span>
+                        </div>
+                        <p class="text-sm text-gray-700 bg-gray-50 p-3 rounded"><%= comment.comment_text %></p>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+
+        <% if (user) { %>
+            <form action="/ideas/comment/<%= submission.id %>" method="POST" class="space-y-3 pt-4 border-t">
+                <textarea name="commentText" rows="3" required placeholder="Contribute technical feedback or ask a question..." class="w-full px-3 py-2 border rounded-md text-sm focus:ring focus:ring-blue-300"></textarea>
+                <button type="submit" class="bg-blue-900 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-800 transition">
+                    Send Message
+                </button>
+            </form>
+        <% } else { %>
+            <p class="text-xs text-gray-500 text-center pt-2"><a href="/auth/login" class="text-blue-600 underline">Sign in</a> to join the discussion chat.</p>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

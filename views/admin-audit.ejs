@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-blue-900">Admin Security & Audit Trail</h1>
+            <p class="text-sm text-gray-600 mt-1">Immutable tracking of all submission activities, cryptographic fingerprints, and actor actions.</p>
+        </div>
+        <a href="/ideas/feed" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-semibold hover:bg-gray-300 text-sm">
+            ← Back to Marketplace
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 bg-blue-900 text-white font-semibold flex justify-between items-center">
+            <span>Tamper-Proof System Audit Logs</span>
+            <span class="text-xs bg-blue-800 px-3 py-1 rounded">Total Events: <%= logs.length %></span>
+        </div>
+
+        <% if (logs.length === 0) { %>
+            <p class="text-gray-500 text-center py-12">No audit log events recorded yet.</p>
+        <% } else { %>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-gray-100 border-b text-gray-700">
+                            <th class="p-3">Event ID</th>
+                            <th class="p-3">Submission / Idea</th>
+                            <th class="p-3">Actor (User)</th>
+                            <th class="p-3">Action Type</th>
+                            <th class="p-3">Cryptographic SHA-256 Hash</th>
+                            <th class="p-3">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <% logs.forEach(log => { %>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3 font-mono text-xs">#<%= log.id %></td>
+                                <td class="p-3 font-semibold text-blue-900"><%= log.submission_title %></td>
+                                <td class="p-3 text-gray-700"><%= log.actor_name %><br><span class="text-[11px] text-gray-400"><%= log.actor_email %></span></td>
+                                <td class="p-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-bold"><%= log.action_type %></span></td>
+                                <td class="p-3 font-mono text-[10px] text-gray-600 max-w-xs truncate" title="<%= log.file_hash %>"><%= log.file_hash %></td>
+                                <td class="p-3 text-xs text-gray-500"><%= new Date(log.timestamp).toLocaleString() %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

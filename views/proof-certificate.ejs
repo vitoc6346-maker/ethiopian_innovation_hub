@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<div class="bg-white p-8 rounded-lg shadow-lg border-2 border-blue-900 text-center space-y-6">
+    <div class="border-b pb-4">
+        <span class="text-4xl">🛡️</span>
+        <h2 class="text-3xl font-extrabold text-blue-900 mt-2">Certificate of Authorship</h2>
+        <p class="text-sm text-gray-600">Ethiopian Airlines Enterprise Innovation & Intellectual Property Protection System</p>
+    </div>
+
+    <div class="text-left bg-gray-50 p-6 rounded-md space-y-3 border">
+        <p><strong>Submission ID:</strong> #<%= submission.id %></p>
+        <p><strong>Project Title:</strong> <%= submission.title %></p>
+        <p><strong>Lead Author:</strong> <%= submission.authorName %> (<%= submission.authorEmail %>)</p>
+
+        <% if (submission.coauthors && submission.coauthors.length > 0) { %>
+            <p><strong>Co-Authors / Collaborators:</strong> <%= submission.coauthors.join(', ') %></p>
+        <% } %>
+
+        <p><strong>Timestamp:</strong> <%= submission.createdAt %></p>
+        <div>
+            <strong class="block text-sm text-gray-700 mb-1">Cryptographic Proof Fingerprint (SHA-256):</strong>
+            <code class="block bg-black text-green-400 p-3 rounded text-xs break-all font-mono"><%= submission.fileHash %></code>
+        </div>
+    </div>
+
+    <p class="text-xs text-gray-500">This cryptographic signature proves beyond doubt that you possessed this exact file content at the precise timestamp recorded above. No one can steal or claim prior credit.</p>
+
+    <div class="flex justify-center space-x-4">
+        <button onclick="window.print()" class="bg-blue-900 text-white px-6 py-2 rounded hover:bg-blue-800 text-sm font-semibold">
+            Print / Save Certificate PDF
+        </button>
+        <a href="/ideas/feed" class="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400 text-sm font-semibold">
+            Return to Dashboard
+        </a>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

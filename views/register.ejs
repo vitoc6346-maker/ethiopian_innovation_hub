@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md border border-gray-200">
+    <h2 class="text-2xl font-bold mb-6 text-blue-900 text-center">Employee Registration</h2>
+
+    <% if (error) { %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm"><%= error %></div>
+    <% } %>
+
+    <form action="/auth/register" method="POST" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input type="text" name="fullName" required class="mt-1 w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Company Email (@ethiopianairlines.com)</label>
+            <input type="email" name="email" placeholder="name@ethiopianairlines.com" required class="mt-1 w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Department</label>
+            <select name="departmentId" required class="mt-1 w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300 bg-white">
+                <% departments.forEach(dept => { %>
+                    <option value="<%= dept.id %>"><%= dept.department_name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Password</label>
+            <input type="password" name="password" required class="mt-1 w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300">
+        </div>
+
+        <button type="submit" class="w-full bg-blue-900 text-white py-2 rounded-md font-semibold hover:bg-blue-800 transition">
+            Register Account
+        </button>
+    </form>
+
+    <p class="text-xs text-center text-gray-600 mt-4">Already have an account? <a href="/auth/login" class="text-blue-600 underline">Login here</a></p>
+</div>
+
+<%- include('partials/footer') %>

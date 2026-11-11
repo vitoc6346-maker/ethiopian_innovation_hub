@@ -1,0 +1,113 @@
+<%- include('partials/header') %>
+
+<div class="space-y-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-blue-900">Ethiopian Airlines Innovation Marketplace</h1>
+            <p class="text-sm text-gray-600 mt-1">Explore and endorse creative solutions submitted across all airline departments.</p>
+        </div>
+        <% if (user) { %>
+            <a href="/ideas/submit" class="bg-blue-900 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-800 text-sm shadow whitespace-nowrap">
+                + Submit New Idea
+            </a>
+        <% } %>
+    </div>
+
+    <!-- Search, Filter & Sort Bar -->
+    <form action="/ideas/feed" method="GET" class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+        <div class="md:col-span-2">
+            <label class="block text-xs font-semibold text-gray-700 mb-1">Search Keywords</label>
+            <input type="text" name="search" value="<%= filters.search %>" placeholder="Search titles or descriptions..." class="w-full px-3 py-2 border rounded-md text-sm">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1">Department</label>
+            <select name="department" class="w-full px-3 py-2 border rounded-md text-sm bg-white">
+                <option value="">All Departments</option>
+                <% departments.forEach(dept => { %>
+                    <option value="<%= dept.id %>" <%= filters.department == dept.id ? 'selected' : '' %>><%= dept.department_name %></option>
+                <% }) %>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1">Status</label>
+            <select name="status" class="w-full px-3 py-2 border rounded-md text-sm bg-white">
+                <option value="">All Statuses</option>
+                <option value="Submitted" <%= filters.status === 'Submitted' ? 'selected' : '' %>>Submitted</option>
+                <option value="Under Review" <%= filters.status === 'Under Review' ? 'selected' : '' %>>Under Review</option>
+                <option value="Approved" <%= filters.status === 'Approved' ? 'selected' : '' %>>Approved</option>
+                <option value="Rejected" <%= filters.status === 'Rejected' ? 'selected' : '' %>>Rejected</option>
+            </select>
+        </div>
+        <div class="flex space-x-2">
+            <div class="flex-grow">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Sort By</label>
+                <select name="sort" class="w-full px-3 py-2 border rounded-md text-sm bg-white">
+                    <option value="votes" <%= filters.sort === 'votes' ? 'selected' : '' %>>Most Voted</option>
+                    <option value="roi" <%= filters.sort === 'roi' ? 'selected' : '' %>>Highest Projected ROI ($)</option>
+                    <option value="oldest" <%= filters.sort === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+                    <option value="title" <%= filters.sort === 'title' ? 'selected' : '' %>>Title (A-Z)</option>
+                </select>
+            </div>
+            <button type="submit" class="self-end bg-blue-900 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-800 transition">
+                Filter
+            </button>
+        </div>
+    </form>
+
+    <!-- Submissions Grid -->
+    <div class="grid gap-6 md:grid-cols-2">
+        <% if (submissions.length === 0) { %>
+            <p class="text-gray-500 col-span-2 text-center py-12 bg-white rounded-xl border border-gray-200">No innovations found matching your filter criteria.</p>
+        <% } else { %>
+            <% submissions.forEach(sub => { %>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="flex space-x-2">
+                                <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full"><%= sub.department_name %></span>
+                                <span class="text-xs font-semibold px-2.5 py-1 bg-green-100 text-green-800 rounded-full">📈 <%= sub.impact_category %></span>
+                            </div>
+                            <span class="text-xs font-medium text-gray-500"><%= new Date(sub.created_at).toLocaleDateString() %></span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mt-2">
+                            <a href="/ideas/detail/<%= sub.id %>" class="hover:underline text-blue-900 hover:text-blue-700">
+                                <%= sub.title %>
+                            </a>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-2 line-clamp-3"><%= sub.description %></p>
+                        
+                        <% if (sub.projected_savings_usd > 0) { %>
+                            <div class="mt-3 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded border border-emerald-200 inline-block">
+                                Projected Annual Savings: $<%= Number(sub.projected_savings_usd).toLocaleString() %> USD
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div class="pt-4 border-t flex justify-between items-center text-xs text-gray-500">
+                        <div>
+                            <span>By: <strong><%= sub.author_name %></strong></span>
+                            <% if (sub.coauthors) { %>
+                                <span class="block text-[11px] text-gray-400">Co-authors: <%= sub.coauthors %></span>
+                            <% } %>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 font-semibold"><%= sub.status %></span>
+                            <% if (user) { %>
+                                <form action="/ideas/vote/<%= sub.id %>" method="POST" class="inline">
+                                    <button type="submit" class="flex items-center space-x-1 bg-blue-50 hover:bg-blue-100 text-blue-900 px-3 py-1 rounded border border-blue-200 font-medium transition">
+                                        <span>👍 Endorse</span>
+                                        <span class="bg-blue-900 text-white px-1.5 py-0.5 rounded-full text-[10px]"><%= sub.vote_count %></span>
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <span class="bg-gray-100 px-2.5 py-1 rounded text-gray-700 font-medium">👍 <%= sub.vote_count %> Votes</span>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
